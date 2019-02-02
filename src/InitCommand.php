@@ -43,8 +43,8 @@ class InitCommand extends Command
         if (!class_exists('ZipArchive')) {
             throw new RuntimeException('The Zip PHP extension is not installed. Please install it and try again.');
         }
-
-        $directory = ($input->getArgument('name')) ? getcwd() . '/' . $input->getArgument('name') : getcwd();
+        $type = $input->getArgument('type');
+        $directory =  $this->makeFilename($input->getArgument('name'), $type);
 
         if (!$input->getOption('force')) {
             $this->verifyApplicationDoesntExist($directory);
@@ -53,12 +53,10 @@ class InitCommand extends Command
         $output->writeln('<info>Initializing application...</info>');
 
         $version = $this->getVersion($input);
-        $name = $input->getArgument('name');
-        $type = $input->getArgument('type');
-        $name = $this->makeFilename($name, $type);
 
-        $this->download($output, $type, $name, $version)
-            ->cleanUp($name, $output);
+
+        $this->download($output, $type, $directory, $version)
+            ->cleanUp($directory, $output);
 
         $composer = $this->findComposer();
 
