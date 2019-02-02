@@ -61,7 +61,7 @@ class InitCommand extends Command
         $composer = $this->findComposer();
 
         $commands = [
-            $composer . ' install --no-scripts',
+            $composer . ' install',
         ];
 
         if ($input->getOption('no-ansi')) {
