@@ -120,19 +120,32 @@ class InitCommand extends Command
     protected function makeFilename($name, $type)
     {
         $filesystem = new Filesystem();
+        $repoName = strpos($type, '/') !== false ? substr($type, strpos($type, "/") + 1, strlen($type) - strpos($type, "/") - 1) : $type;
+        $wp = $filesystem->exists('wp-content');
 
-        if(!$name) {
-            if($type === 'enfold') {
-                if($filesystem->exists('wp-content'))
-                    return 'wp-content/themes/enfold-child';
-                else
-                    return 'enfold-child';
-
-            }
-            else if($name == 'plugin')
-                return 'owp-plugin';
+        if($type === 'enfold') {
+            if(!$name) $name = 'enfold-child';
+            return $wp ? 'wp-content/themes/' . $name : $name;
         }
-        return $name;
+        else if(strpos($type, 'theme') !== false) {
+            if(!$name) $name = $repoName;
+            return $wp ? 'wp-content/themes/' . $name : $name;
+        }
+        else if($type === 'plugin') {
+            if(!$name) $name = 'owp-plugin';
+            return $wp ? 'wp-content/plugins/' . $name : $name;
+        }
+        else if(strpos($type, 'plugin') !== false) {
+            if (!$name) $name = $repoName;
+            return $wp ? 'wp-content/plugins/' . $name : $name;
+        }
+        else {
+            if (!$name) $name = $repoName;
+            return $wp ? 'wp-content/themes/' . $name : $name;
+        }
+
+
+
     }
 
     /**
