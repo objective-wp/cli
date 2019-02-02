@@ -10,7 +10,7 @@ composer global require "objective-wp/cli":dev-master
 ## `init`
 
 Clones and composer installs a objective-wp project from github. The whole path may be
-given <author>/<repo>. 
+given `<author>/<repo>` or just the `<repo>` if `set-org` has been ran. 
 
 ```
 owp init <author>/<repo>
