@@ -2,6 +2,7 @@
 
 namespace ObjectiveWP\Console;
 
+use http\Exception\InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -90,6 +91,10 @@ class InitCommand extends Command
         $process->run(function ($type, $line) use ($output) {
             $output->write($line);
         });
+
+        if($process->getExitCode() > 0) {
+            throw new RuntimeException("$commands failed with exit code: " . $process->getExitCode());
+        }
     }
 
     /**
@@ -119,7 +124,7 @@ class InitCommand extends Command
         if(!$name) {
             if($type === 'enfold') {
                 if($filesystem->exists('wp-content'))
-                    return realpath('wp-content/themes/enfold-child');
+                    return 'wp-content/themes/enfold-child';
                 else
                     return 'enfold-child';
 
@@ -142,7 +147,7 @@ class InitCommand extends Command
     protected function download($output, $type, $name, $version = 'master')
     {
         $url = 'https://github.com/' . $this->getRepo($type);
-        $this->executeCommand(['git', 'clone', '--single-branch', '--branch', $version, $url, $name], getcwd(), $output);
+        $this->executeCommand("git clone --single-branch --branch $version $url $name", getcwd(), $output);
         return $this;
     }
 
@@ -152,6 +157,8 @@ class InitCommand extends Command
      */
     protected function getRepo($type) {
         $org = '';
+        if(strpos($type, '/') !== false)
+            return $type;
         if(file_exists(Config::getConfigPath()))
             $org = file_get_contents(Config::getConfigPath()) . '/';
         if($type === 'enfold')
@@ -159,11 +166,12 @@ class InitCommand extends Command
         else if($type === 'plugin')
             return $org . 'objective-wp-plugin-starter';
         else
-            return $type;
+            return $org . $type;
     }
 
-    protected function getDeleteCommand($name) {
-        $path =  realpath($name);
+    protected function getDeleteCommand($path) {
+        if(!$path)
+            throw new InvalidArgumentException("No path given to delete.");
         if("\\" === DIRECTORY_SEPARATOR)
             return 'rd /s /q "' . $path . '"';
         else
