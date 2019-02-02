@@ -1,0 +1,27 @@
+{
+  "name": "objective-wp/cli",
+  "description": "objective-wp cli allows you to init themes and plugins",
+  "keywords": ["objective-wp", "cli", "php"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jason Gallavin",
+      "email": "jasongallavin@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ObjectiveWP\\Console\\": "src/"
+    }
+  },
+  "require": {
+    "ext-zip": "*",
+    "guzzlehttp/guzzle": "~6.0",
+    "symfony/console": "~3.0|~4.0",
+    "symfony/filesystem": "~3.0|~4.0",
+    "symfony/process": "~3.0|~4.0"
+  },
+  "bin": [
+    "owp"
+  ]
+}
