@@ -188,7 +188,7 @@ class InitCommand extends Command
         if("\\" === DIRECTORY_SEPARATOR)
             return 'rd /s /q "' . $path . '"';
         else
-            return 'rm -rf' . $path;
+            return 'rm -rf ' . $path;
     }
 
     /**
